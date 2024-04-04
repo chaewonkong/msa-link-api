@@ -18,6 +18,11 @@ func NewHandler(r *Repository, l *slog.Logger) *Handler {
 	return &Handler{r, l}
 }
 
+// HandleHealthCheck handles health check
+func (h *Handler) HandleHealthCheck(c echo.Context) error {
+	return c.String(http.StatusOK, "ok")
+}
+
 // HandleLinkAdd handles adding a new link
 func (h *Handler) HandleLinkAdd(c echo.Context) error {
 	l := new(AddPayload)

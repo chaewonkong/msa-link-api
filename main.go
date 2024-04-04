@@ -40,6 +40,8 @@ func main() {
 
 	r := link.NewRepository(db)
 	h := link.NewHandler(r, logger)
+
+	e.GET("/alive", h.HandleHealthCheck)
 	e.POST("/link", h.HandleLinkAdd)
 
 	e.Logger.Fatal(e.Start(":8080"))
