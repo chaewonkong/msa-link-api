@@ -1,8 +1,6 @@
 package main
 
 import (
-	"github.com/joho/godotenv"
-	"log"
 	"os"
 )
 
@@ -19,15 +17,6 @@ type DBConfig struct {
 
 // NewDBConfig creates a new DBConfig
 func NewDBConfig() *DBConfig {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	return &DBConfig{
 		Host:     os.Getenv("DB_HOST"),
 		User:     os.Getenv("DB_USER"),

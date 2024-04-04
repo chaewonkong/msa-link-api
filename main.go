@@ -2,16 +2,20 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"log/slog"
+	"os"
+
 	"github.com/chaewonkong/msa-link-api/link"
 	"github.com/labstack/echo/v4"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"log"
 )
 
 func main() {
 	e := echo.New()
 	cfg := NewDBConfig()
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s TimeZone=%s",
@@ -24,7 +28,7 @@ func main() {
 		cfg.TimeZone,
 	)
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{}) // TODO: connect postgreSQL
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -35,7 +39,7 @@ func main() {
 	}
 
 	r := link.NewRepository(db)
-	h := link.NewHandler(r)
+	h := link.NewHandler(r, logger)
 	e.POST("/link", h.HandleLinkAdd)
 
 	e.Logger.Fatal(e.Start(":8080"))
