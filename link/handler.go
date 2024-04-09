@@ -56,10 +56,22 @@ func (h *Handler) HandleLinkAdd(c echo.Context) error {
 		h.logger.Error("error occurred while marshalling payload", err)
 	}
 
+	q, err := ch.QueueDeclare(
+		"link",
+		false,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		h.logger.Error("error occurred while declaring queue", err)
+	}
+
 	err = ch.PublishWithContext(
 		c.Request().Context(),
-		"link",
 		"",
+		q.Name,
 		false,
 		false,
 		amqp.Publishing{
