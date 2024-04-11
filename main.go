@@ -55,6 +55,7 @@ func main() {
 
 	e.GET("/alive", h.HandleHealthCheck)
 	e.POST("/link", h.HandleLinkAdd)
+	e.PATCH("/link", h.HandleLinkUpdate)
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

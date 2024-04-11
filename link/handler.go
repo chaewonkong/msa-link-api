@@ -86,3 +86,21 @@ func (h *Handler) HandleLinkAdd(c echo.Context) error {
 	// save link to database
 	return c.JSON(http.StatusOK, res)
 }
+
+func (h *Handler) HandleLinkUpdate(c echo.Context) error {
+	l := new(UpdatePayload)
+	ctp := c.Request().Header.Get("Content-Type")
+	_ = ctp
+	if err := c.Bind(l); err != nil {
+		h.logger.Error("error occurred while binding payload", err)
+		return c.String(http.StatusBadRequest, "Invalid payload")
+	}
+
+	res, err := h.repo.Update(*l)
+	if err != nil {
+		h.logger.Error("error occurred while updating link", err)
+		return c.String(http.StatusInternalServerError, "error occurred while updating link")
+	}
+
+	return c.JSON(http.StatusOK, res)
+}
