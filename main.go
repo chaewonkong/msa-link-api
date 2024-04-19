@@ -19,6 +19,7 @@ func main() {
 	// RabbitMQ
 	queueURL := infrastructure.QueueURL(cfg.Queue.User, cfg.Queue.Password, cfg.Queue.Host, cfg.Queue.Port)
 	queueConn := infrastructure.NewQueue(queueURL)
+	defer queueConn.Close()
 
 	// DB
 	dsn := infrastructure.DSN(

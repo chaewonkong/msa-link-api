@@ -57,8 +57,8 @@ func (h *Handler) HandleLinkAdd(c echo.Context) error {
 	}
 
 	q, err := ch.QueueDeclare(
-		"link",
-		false,
+		"link_queue",
+		true,
 		false,
 		false,
 		false,

@@ -20,7 +20,6 @@ func NewQueue(queueURL string) *amqp.Connection {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer queueConn.Close()
 
 	return queueConn
 }
