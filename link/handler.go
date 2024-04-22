@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/chaewonkong/msa-link/lib/transport/queue"
 	amqp "github.com/rabbitmq/amqp091-go"
 
 	"github.com/labstack/echo/v4"
@@ -13,12 +14,12 @@ import (
 // Handler represents the handler for link
 type Handler struct {
 	repo   *Repository
-	queue  *amqp.Connection
+	queue  *queue.RabbitMQ
 	logger *slog.Logger
 }
 
 // NewHandler creates a new link handler
-func NewHandler(r *Repository, q *amqp.Connection, l *slog.Logger) *Handler {
+func NewHandler(r *Repository, q *queue.RabbitMQ, l *slog.Logger) *Handler {
 	return &Handler{r, q, l}
 }
 
@@ -41,13 +42,6 @@ func (h *Handler) HandleLinkAdd(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, "error occurred while saving link")
 	}
 
-	// send message to queue
-	ch, err := h.queue.Channel()
-	if err != nil {
-		h.logger.Error("error occurred while publishing message", err)
-	}
-	defer ch.Close()
-
 	// convert saved res to QueuePayload
 	QueuePayload := new(QueuePayload)
 	QueuePayload.FromEntity(res)
@@ -56,7 +50,7 @@ func (h *Handler) HandleLinkAdd(c echo.Context) error {
 		h.logger.Error("error occurred while marshalling payload", err)
 	}
 
-	q, err := ch.QueueDeclare(
+	q, err := h.queue.Ch.QueueDeclare(
 		"link_queue",
 		true,
 		false,
@@ -68,7 +62,7 @@ func (h *Handler) HandleLinkAdd(c echo.Context) error {
 		h.logger.Error("error occurred while declaring queue", err)
 	}
 
-	err = ch.PublishWithContext(
+	err = h.queue.Ch.PublishWithContext(
 		c.Request().Context(),
 		"",
 		q.Name,

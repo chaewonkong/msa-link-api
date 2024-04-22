@@ -8,6 +8,7 @@ import (
 	"github.com/chaewonkong/msa-link-api/config"
 	"github.com/chaewonkong/msa-link-api/infrastructure"
 	"github.com/chaewonkong/msa-link-api/link"
+	"github.com/chaewonkong/msa-link/lib/transport/queue"
 	"github.com/labstack/echo/v4"
 )
 
@@ -17,8 +18,8 @@ func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
 	// RabbitMQ
-	queueURL := infrastructure.QueueURL(cfg.Queue.User, cfg.Queue.Password, cfg.Queue.Host, cfg.Queue.Port)
-	queueConn := infrastructure.NewQueue(queueURL)
+	queueURL := queue.URL(cfg.Queue.User, cfg.Queue.Password, cfg.Queue.Host, cfg.Queue.Port)
+	queueConn := queue.NewRabbitMQ(queueURL)
 	defer queueConn.Close()
 
 	// DB

@@ -3,6 +3,7 @@ module github.com/chaewonkong/msa-link-api
 go 1.22.0
 
 require (
+	github.com/chaewonkong/msa-link v0.1.0
 	github.com/labstack/echo/v4 v4.11.4
 	github.com/rabbitmq/amqp091-go v1.9.0
 	gorm.io/driver/postgres v1.5.7
